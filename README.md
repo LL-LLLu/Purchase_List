@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Purchase Tracker
 
-## Getting Started
+A full-stack Next.js application for tracking personal purchases, based on a provided template.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Store-like Listing**: View purchases in a grid with filters for Category, Year, and Store.
+- **Detail View**: Click any item to see full details and user reviews.
+- **Admin Dashboard**: Manage your inventory at `/admin` (Settings).
+  - Add new purchases.
+  - Create new Categories, Stores, and Years.
+  - Delete items.
+  - **Password Protected**: Requires login. Default password is `secret_password`.
+- **Database**: Uses Prisma with SQLite (local development).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setup
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2.  **Initialize Database**:
+    ```bash
+    npx prisma migrate dev --name init
+    npx tsx prisma/seed.ts
+    ```
 
-## Learn More
+3.  **Run Development Server**:
+    ```bash
+    npm run dev
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+4.  **Open Browser**:
+    Visit [http://localhost:3000](http://localhost:3000).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Configuration
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Admin Password**: Set `ADMIN_PASSWORD` in `.env`. Default is `admin` if not set (or `secret_password` in provided `.env`).
 
-## Deploy on Vercel
+## Deployment to Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project is configured for local development using SQLite. To deploy to Vercel, you should switch to Vercel Postgres:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  Create a Vercel Postgres database.
+2.  Update `.env` with the Vercel Postgres connection string (`POSTGRES_PRISMA_URL` etc.).
+3.  Update `prisma/schema.prisma`:
+    ```prisma
+    datasource db {
+      provider = "postgresql"
+      url = env("POSTGRES_PRISMA_URL") // or similar
+    }
+    ```
+4.  Run `prisma migrate deploy` during build or via Vercel dashboard integration.
