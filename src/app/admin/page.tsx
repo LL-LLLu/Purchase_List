@@ -2,7 +2,8 @@ import { prisma } from '@/lib/prisma'
 import Header from '@/app/components/Header'
 import Footer from '@/app/components/Footer'
 import MultiImageUpload from '@/app/components/MultiImageUpload'
-import { createItem, createCategory, createStore, createYear, createBrand, deleteItem, logout } from '@/app/actions'
+import DeleteButton from '@/app/components/DeleteButton'
+import { createItem, createCategory, createStore, createYear, createBrand, deleteItem, deleteBrand, deleteCategory, deleteStore, deleteYear, logout } from '@/app/actions'
 import Link from 'next/link'
 
 export const dynamic = 'force-dynamic'
@@ -131,37 +132,77 @@ export default async function AdminPage() {
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div>
-                        <h3>Add Brand</h3>
+                        <h3>Brands</h3>
                         <form action={createBrand} className="admin-form" style={{ marginTop: '10px' }}>
                             <input name="name" placeholder="Brand Name" required />
                             <button type="submit">Add</button>
                         </form>
+                        {brands.length > 0 && (
+                            <div className="entity-list">
+                                {brands.map(b => (
+                                    <div key={b.id} className="entity-item">
+                                        <span>{b.name}</span>
+                                        <DeleteButton id={b.id} deleteAction={deleteBrand} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div>
-                        <h3>Add Category</h3>
+                        <h3>Categories</h3>
                         <form action={createCategory} className="admin-form" style={{ marginTop: '10px' }}>
                             <input name="name" placeholder="Category Name" required />
                             <button type="submit">Add</button>
                         </form>
+                        {categories.length > 0 && (
+                            <div className="entity-list">
+                                {categories.map(c => (
+                                    <div key={c.id} className="entity-item">
+                                        <span>{c.name}</span>
+                                        <DeleteButton id={c.id} deleteAction={deleteCategory} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                     <div>
-                        <h3>Add Store</h3>
+                        <h3>Stores</h3>
                         <form action={createStore} className="admin-form" style={{ marginTop: '10px' }}>
                             <input name="name" placeholder="Store Name" required />
                             <button type="submit">Add</button>
                         </form>
+                        {stores.length > 0 && (
+                            <div className="entity-list">
+                                {stores.map(s => (
+                                    <div key={s.id} className="entity-item">
+                                        <span>{s.name}</span>
+                                        <DeleteButton id={s.id} deleteAction={deleteStore} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div>
-                        <h3>Add Year</h3>
+                        <h3>Years</h3>
                         <form action={createYear} className="admin-form" style={{ marginTop: '10px' }}>
                             <input name="value" type="number" placeholder="Year (e.g. 2026)" required />
                             <button type="submit">Add</button>
                         </form>
+                        {years.length > 0 && (
+                            <div className="entity-list">
+                                {years.map(y => (
+                                    <div key={y.id} className="entity-item">
+                                        <span>{y.value}</span>
+                                        <DeleteButton id={y.id} deleteAction={deleteYear} />
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 </div>
 

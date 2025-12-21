@@ -890,6 +890,44 @@ footer a:hover::after,
   font-size: 13px;
 }
 
+/* --- ENTITY LIST (Admin) --- */
+.entity-list {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background: var(--color-card-bg);
+}
+
+.entity-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  background: var(--color-bg);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.delete-button-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.delete-error {
+  font-size: 11px;
+  color: var(--status-red);
+  max-width: 180px;
+  text-align: right;
+}
+
 /* --- IMAGE GALLERY --- */
 .image-gallery {
   display: flex;

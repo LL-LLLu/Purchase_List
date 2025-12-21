@@ -143,6 +143,50 @@ export async function createYear(formData: FormData) {
   revalidatePath('/admin')
 }
 
+export async function deleteBrand(id: number) {
+  // Check if brand is in use
+  const itemsUsingBrand = await prisma.item.count({ where: { brandId: id } })
+  if (itemsUsingBrand > 0) {
+    return { error: `Cannot delete: ${itemsUsingBrand} item(s) use this brand` }
+  }
+  await prisma.brand.delete({ where: { id } })
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deleteCategory(id: number) {
+  // Check if category is in use
+  const itemsUsingCategory = await prisma.item.count({ where: { categoryId: id } })
+  if (itemsUsingCategory > 0) {
+    return { error: `Cannot delete: ${itemsUsingCategory} item(s) use this category` }
+  }
+  await prisma.category.delete({ where: { id } })
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deleteStore(id: number) {
+  // Check if store is in use
+  const itemsUsingStore = await prisma.item.count({ where: { storeId: id } })
+  if (itemsUsingStore > 0) {
+    return { error: `Cannot delete: ${itemsUsingStore} item(s) use this store` }
+  }
+  await prisma.store.delete({ where: { id } })
+  revalidatePath('/admin')
+  return { success: true }
+}
+
+export async function deleteYear(id: number) {
+  // Check if year is in use
+  const itemsUsingYear = await prisma.item.count({ where: { yearId: id } })
+  if (itemsUsingYear > 0) {
+    return { error: `Cannot delete: ${itemsUsingYear} item(s) use this year` }
+  }
+  await prisma.year.delete({ where: { id } })
+  revalidatePath('/admin')
+  return { success: true }
+}
+
 export async function deleteItem(id: number) {
   await prisma.item.delete({ where: { id } })
   revalidatePath('/')
