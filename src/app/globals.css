@@ -284,13 +284,13 @@ header .btn {
 }
 
 .filter-options-dropdown .filter-item {
-  padding: 8px 4px;
+  padding: 10px 8px;
   display: block;
-  border-bottom: 1px solid var(--color-border);
+  line-height: 1.4;
 }
 
-.filter-options-dropdown .filter-item:last-child {
-  border-bottom: none;
+.filter-options-dropdown .filter-item + .filter-item {
+  margin-top: 6px;
 }
 
 /* Custom scrollbar for filter dropdowns */
