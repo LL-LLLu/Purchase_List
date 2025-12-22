@@ -16,6 +16,7 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
   })
 
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [lightboxOpen, setLightboxOpen] = useState(false)
   const thumbnailsRef = useRef<HTMLDivElement>(null)
 
   // Keyboard navigation
@@ -25,12 +26,26 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
         setSelectedIndex(i => (i - 1 + sortedImages.length) % sortedImages.length)
       } else if (e.key === 'ArrowRight') {
         setSelectedIndex(i => (i + 1) % sortedImages.length)
+      } else if (e.key === 'Escape' && lightboxOpen) {
+        setLightboxOpen(false)
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [sortedImages.length])
+  }, [sortedImages.length, lightboxOpen])
+
+  // Prevent body scroll when lightbox is open
+  useEffect(() => {
+    if (lightboxOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [lightboxOpen])
 
   // Scroll thumbnail into view when selected
   useEffect(() => {
@@ -50,8 +65,18 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
     )
   }
 
-  const goToPrev = () => setSelectedIndex(i => (i - 1 + sortedImages.length) % sortedImages.length)
-  const goToNext = () => setSelectedIndex(i => (i + 1) % sortedImages.length)
+  const goToPrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    setSelectedIndex(i => (i - 1 + sortedImages.length) % sortedImages.length)
+  }
+
+  const goToNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation()
+    setSelectedIndex(i => (i + 1) % sortedImages.length)
+  }
+
+  const openLightbox = () => setLightboxOpen(true)
+  const closeLightbox = () => setLightboxOpen(false)
 
   return (
     <div className="image-gallery">
@@ -62,6 +87,13 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
           alt={`${title} - Image ${selectedIndex + 1}`}
           className="gallery-main-image"
         />
+
+        {/* Fullscreen button */}
+        <button className="gallery-fullscreen-btn" onClick={openLightbox} aria-label="View full size">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3" />
+          </svg>
+        </button>
 
         {sortedImages.length > 1 && (
           <>
@@ -95,7 +127,38 @@ export default function ImageGallery({ images, title }: ImageGalleryProps) {
       )}
 
       {sortedImages.length > 1 && (
-        <p className="gallery-hint">Use arrow keys or click thumbnails to navigate</p>
+        <p className="gallery-hint">Use arrow keys to navigate</p>
+      )}
+
+      {/* Lightbox Modal */}
+      {lightboxOpen && (
+        <div className="lightbox-overlay" onClick={closeLightbox}>
+          <button className="lightbox-close" onClick={closeLightbox} aria-label="Close lightbox">
+            ×
+          </button>
+
+          <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
+            <img
+              src={sortedImages[selectedIndex].url}
+              alt={`${title} - Image ${selectedIndex + 1}`}
+              className="lightbox-image"
+            />
+          </div>
+
+          {sortedImages.length > 1 && (
+            <>
+              <button className="lightbox-nav lightbox-prev" onClick={goToPrev} aria-label="Previous image">
+                ‹
+              </button>
+              <button className="lightbox-nav lightbox-next" onClick={goToNext} aria-label="Next image">
+                ›
+              </button>
+              <div className="lightbox-counter">
+                {selectedIndex + 1} / {sortedImages.length}
+              </div>
+            </>
+          )}
+        </div>
       )}
     </div>
   )
