@@ -4,7 +4,10 @@ import Sidebar from './components/Sidebar'
 import ProductCard from './components/ProductCard'
 import Footer from './components/Footer'
 import MobileFilters from './components/MobileFilters'
+import Pagination from './components/Pagination'
 import { Suspense } from 'react'
+
+const ITEMS_PER_PAGE = 6
 
 export const revalidate = 0 // Disable cache for prototype simplicity
 
@@ -16,6 +19,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const brandId = sp.brandId ? Number(sp.brandId) : undefined
   const status = typeof sp.status === 'string' ? sp.status : undefined
   const searchQuery = typeof sp.q === 'string' ? sp.q.trim().toLowerCase() : undefined
+  const currentPage = sp.page ? Math.max(1, Number(sp.page)) : 1
 
   const where: any = {}
   if (categoryId) where.categoryId = categoryId
@@ -42,10 +46,16 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
     ]
   }
 
+  // Get total count for pagination
+  const totalItems = await prisma.item.count({ where })
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+
   const items = await prisma.item.findMany({
     where,
     include: { store: true, category: true, year: true, brand: true, images: { orderBy: { order: 'asc' } } },
-    orderBy: { purchaseDate: 'desc' }
+    orderBy: { purchaseDate: 'desc' },
+    skip: (currentPage - 1) * ITEMS_PER_PAGE,
+    take: ITEMS_PER_PAGE
   })
 
   const categories = await prisma.category.findMany()
@@ -56,7 +66,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   return (
     <>
       <div className="announcement-bar">
-        Total Items: {items.length}
+        Total Items: {totalItems}
       </div>
 
       <Header />
@@ -68,7 +78,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
 
         <section className="product-grid-section">
           <div className="toolbar">
-            <span>{items.length} Items Tracked</span>
+            <span>{totalItems} Items Tracked</span>
             <Suspense fallback={null}>
               <MobileFilters categories={categories} years={years} stores={stores} brands={brands} />
             </Suspense>
@@ -86,6 +96,10 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
               </div>
             )}
           </div>
+
+          <Suspense fallback={null}>
+            <Pagination currentPage={currentPage} totalPages={totalPages} totalItems={totalItems} />
+          </Suspense>
         </section>
       </div>
 

@@ -15,6 +15,19 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
   const [isOpen, setIsOpen] = useState(false)
   const searchParams = useSearchParams()
 
+  // Track which filter groups are expanded
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({
+    category: false,
+    brand: false,
+    year: false,
+    store: false,
+    status: false
+  })
+
+  const toggleExpanded = (key: string) => {
+    setExpanded(prev => ({ ...prev, [key]: !prev[key] }))
+  }
+
   const buildFilterUrl = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString())
     if (params.get(key) === value) {
@@ -22,6 +35,8 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
     } else {
       params.set(key, value)
     }
+    // Reset to page 1 when filters change
+    params.delete('page')
     return `/?${params.toString()}`
   }
 
@@ -53,6 +68,17 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
     setIsOpen(false)
   }
 
+  const getActiveFilterName = (key: string, items: { id: number; name?: string; value?: number }[]) => {
+    const activeId = searchParams.get(key)
+    if (!activeId) return null
+    const item = items.find(i => i.id.toString() === activeId)
+    return item ? (item.name || item.value?.toString()) : null
+  }
+
+  const getActiveStatus = () => {
+    return searchParams.get('status')
+  }
+
   return (
     <div className="mobile-filters">
       <button className="mobile-filters-toggle btn" onClick={() => setIsOpen(true)}>
@@ -75,8 +101,16 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
           )}
 
           <div className="mobile-filter-group">
-            <div className="mobile-filter-title">Category</div>
-            <div className="mobile-filter-options">
+            <div className="mobile-filter-title" onClick={() => toggleExpanded('category')}>
+              <span>Category</span>
+              <span className="filter-toggle-indicator">
+                {getActiveFilterName('categoryId', categories) && (
+                  <span className="filter-active-badge">{getActiveFilterName('categoryId', categories)}</span>
+                )}
+                <span className={`filter-arrow ${expanded.category ? 'expanded' : ''}`}>▼</span>
+              </span>
+            </div>
+            <div className={`mobile-filter-options ${expanded.category ? 'expanded' : 'collapsed'}`}>
               {categories.map(c => (
                 <Link
                   key={c.id}
@@ -91,8 +125,16 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
           </div>
 
           <div className="mobile-filter-group">
-            <div className="mobile-filter-title">Brand</div>
-            <div className="mobile-filter-options">
+            <div className="mobile-filter-title" onClick={() => toggleExpanded('brand')}>
+              <span>Brand</span>
+              <span className="filter-toggle-indicator">
+                {getActiveFilterName('brandId', brands) && (
+                  <span className="filter-active-badge">{getActiveFilterName('brandId', brands)}</span>
+                )}
+                <span className={`filter-arrow ${expanded.brand ? 'expanded' : ''}`}>▼</span>
+              </span>
+            </div>
+            <div className={`mobile-filter-options ${expanded.brand ? 'expanded' : 'collapsed'}`}>
               {brands.map(b => (
                 <Link
                   key={b.id}
@@ -107,8 +149,16 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
           </div>
 
           <div className="mobile-filter-group">
-            <div className="mobile-filter-title">Year</div>
-            <div className="mobile-filter-options">
+            <div className="mobile-filter-title" onClick={() => toggleExpanded('year')}>
+              <span>Year</span>
+              <span className="filter-toggle-indicator">
+                {getActiveFilterName('yearId', years) && (
+                  <span className="filter-active-badge">{getActiveFilterName('yearId', years)}</span>
+                )}
+                <span className={`filter-arrow ${expanded.year ? 'expanded' : ''}`}>▼</span>
+              </span>
+            </div>
+            <div className={`mobile-filter-options ${expanded.year ? 'expanded' : 'collapsed'}`}>
               {years.map(y => (
                 <Link
                   key={y.id}
@@ -123,8 +173,16 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
           </div>
 
           <div className="mobile-filter-group">
-            <div className="mobile-filter-title">Store</div>
-            <div className="mobile-filter-options">
+            <div className="mobile-filter-title" onClick={() => toggleExpanded('store')}>
+              <span>Store</span>
+              <span className="filter-toggle-indicator">
+                {getActiveFilterName('storeId', stores) && (
+                  <span className="filter-active-badge">{getActiveFilterName('storeId', stores)}</span>
+                )}
+                <span className={`filter-arrow ${expanded.store ? 'expanded' : ''}`}>▼</span>
+              </span>
+            </div>
+            <div className={`mobile-filter-options ${expanded.store ? 'expanded' : 'collapsed'}`}>
               {stores.map(s => (
                 <Link
                   key={s.id}
@@ -139,8 +197,16 @@ export default function MobileFilters({ categories, years, stores, brands }: Pro
           </div>
 
           <div className="mobile-filter-group">
-            <div className="mobile-filter-title">Status</div>
-            <div className="mobile-filter-options">
+            <div className="mobile-filter-title" onClick={() => toggleExpanded('status')}>
+              <span>Status</span>
+              <span className="filter-toggle-indicator">
+                {getActiveStatus() && (
+                  <span className="filter-active-badge">{getActiveStatus()}</span>
+                )}
+                <span className={`filter-arrow ${expanded.status ? 'expanded' : ''}`}>▼</span>
+              </span>
+            </div>
+            <div className={`mobile-filter-options ${expanded.status ? 'expanded' : 'collapsed'}`}>
               {['Delivered', 'Pre-Order', 'Returned'].map(status => (
                 <Link
                   key={status}
