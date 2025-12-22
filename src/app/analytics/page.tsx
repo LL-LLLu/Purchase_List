@@ -11,9 +11,13 @@ export default async function AnalyticsPage() {
   })
 
   // 1. Total Spend - use Prisma aggregate for accurate Decimal sum
+  // Only count items that have a purchaseDate (to match YTD logic)
   const totalSpendResult = await prisma.item.aggregate({
     _sum: { price: true },
-    where: { status: { notIn: ['Wishlist', 'Returned'] } }
+    where: {
+      status: { notIn: ['Wishlist', 'Returned'] },
+      purchaseDate: { not: null }
+    }
   })
   const totalSpend = Number(totalSpendResult._sum.price || 0)
   const totalCount = items.length
