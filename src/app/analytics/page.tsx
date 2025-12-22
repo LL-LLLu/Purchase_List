@@ -10,15 +10,15 @@ export default async function AnalyticsPage() {
     where: { status: { not: 'Wishlist' } } // Exclude wishlist from analytics
   })
 
-  // 1. Total Spend
-  const totalSpend = items.reduce((acc, item) => acc + Number(item.price), 0)
+  // 1. Total Spend (properly convert Prisma Decimal)
+  const totalSpend = items.reduce((acc, item) => acc + parseFloat(item.price.toString()), 0)
   const totalCount = items.length
 
   // 2. Spend by Category
   const categoryStats: Record<string, number> = {}
   items.forEach(item => {
     const name = item.category.name
-    categoryStats[name] = (categoryStats[name] || 0) + Number(item.price)
+    categoryStats[name] = (categoryStats[name] || 0) + parseFloat(item.price.toString())
   })
   const categoryData = Object.entries(categoryStats)
     .sort((a, b) => b[1] - a[1])
@@ -29,7 +29,7 @@ export default async function AnalyticsPage() {
   items.forEach(item => {
     // Prefer the linked Year model value, or fallback to purchaseDate year
     const yearVal = item.year.value.toString()
-    yearStats[yearVal] = (yearStats[yearVal] || 0) + Number(item.price)
+    yearStats[yearVal] = (yearStats[yearVal] || 0) + parseFloat(item.price.toString())
   })
   const yearData = Object.entries(yearStats)
     .sort((a, b) => Number(b[0]) - Number(a[0])) // Newest years first
@@ -39,7 +39,7 @@ export default async function AnalyticsPage() {
   const storeStats: Record<string, number> = {}
   items.forEach(item => {
     const name = item.store.name
-    storeStats[name] = (storeStats[name] || 0) + Number(item.price)
+    storeStats[name] = (storeStats[name] || 0) + parseFloat(item.price.toString())
   })
   const storeData = Object.entries(storeStats)
     .sort((a, b) => b[1] - a[1])
@@ -63,7 +63,7 @@ export default async function AnalyticsPage() {
       const pDate = new Date(item.purchaseDate)
       for (const m of last6Months) {
           if (pDate >= m.start && pDate <= m.end) {
-              m.value += Number(item.price)
+              m.value += parseFloat(item.price.toString())
           }
       }
   })
