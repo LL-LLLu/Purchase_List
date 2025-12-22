@@ -269,7 +269,7 @@ header .btn {
 .filter-options-dropdown {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  gap: 8px;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
@@ -279,18 +279,16 @@ header .btn {
 .filter-options-dropdown.expanded {
   max-height: 180px;
   opacity: 1;
-  padding-top: 8px;
+  padding: 10px 0;
   overflow-y: auto;
 }
 
 .filter-options-dropdown .filter-item {
-  padding: 10px 8px;
+  padding: 8px 10px;
   display: block;
-  line-height: 1.4;
-}
-
-.filter-options-dropdown .filter-item + .filter-item {
-  margin-top: 6px;
+  background: var(--color-card-bg);
+  border-radius: 4px;
+  flex-shrink: 0;
 }
 
 /* Custom scrollbar for filter dropdowns */
