@@ -277,7 +277,7 @@ header .btn {
 }
 
 .filter-options-dropdown.expanded {
-  max-height: 400px;
+  max-height: 180px;
   opacity: 1;
   padding-top: 8px;
   overflow-y: auto;
