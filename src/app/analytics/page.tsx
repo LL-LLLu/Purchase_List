@@ -7,11 +7,15 @@ export const revalidate = 0
 export default async function AnalyticsPage() {
   const items = await prisma.item.findMany({
     include: { category: true, year: true, store: true, brand: true },
-    where: { status: { not: 'Wishlist' } } // Exclude wishlist from analytics
+    where: { status: { notIn: ['Wishlist', 'Returned'] } } // Exclude wishlist and returned from analytics
   })
 
-  // 1. Total Spend (properly convert Prisma Decimal)
-  const totalSpend = items.reduce((acc, item) => acc + parseFloat(item.price.toString()), 0)
+  // 1. Total Spend - use Prisma aggregate for accurate Decimal sum
+  const totalSpendResult = await prisma.item.aggregate({
+    _sum: { price: true },
+    where: { status: { notIn: ['Wishlist', 'Returned'] } }
+  })
+  const totalSpend = Number(totalSpendResult._sum.price || 0)
   const totalCount = items.length
 
   // 2. Spend by Category
