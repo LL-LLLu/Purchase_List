@@ -378,9 +378,43 @@ header .btn {
 .toolbar {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
   font-size: 12px;
   color: var(--color-secondary);
+}
+
+/* Sort Dropdown */
+.sort-dropdown {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-dropdown label {
+  font-size: 12px;
+  color: var(--color-secondary);
+}
+
+.sort-select {
+  padding: 6px 10px;
+  font-size: 12px;
+  font-family: inherit;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  background-color: var(--color-input-bg);
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.sort-select:hover {
+  border-color: var(--color-text);
+}
+
+.sort-select:focus {
+  outline: none;
+  border-color: var(--color-text);
 }
 
 .no-results {
@@ -1362,6 +1396,9 @@ footer a:hover::after,
   .toolbar-sort { display: none; }
   .mobile-nav { display: flex; }
   .mobile-filters { display: block; }
+
+  .sort-dropdown label { display: none; }
+  .sort-select { font-size: 11px; padding: 5px 8px; }
 }
 
 /* --- PAGINATION --- */

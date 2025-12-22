@@ -5,6 +5,7 @@ import ProductCard from './components/ProductCard'
 import Footer from './components/Footer'
 import MobileFilters from './components/MobileFilters'
 import Pagination from './components/Pagination'
+import SortDropdown from './components/SortDropdown'
 import { Suspense } from 'react'
 
 const ITEMS_PER_PAGE = 6
@@ -20,6 +21,34 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const status = typeof sp.status === 'string' ? sp.status : undefined
   const searchQuery = typeof sp.q === 'string' ? sp.q.trim().toLowerCase() : undefined
   const currentPage = sp.page ? Math.max(1, Number(sp.page)) : 1
+  const sortParam = typeof sp.sort === 'string' ? sp.sort : 'date-desc'
+
+  // Build orderBy based on sort parameter
+  const getOrderBy = (sort: string) => {
+    switch (sort) {
+      case 'date-asc':
+        return { purchaseDate: 'asc' as const }
+      case 'price-desc':
+        return { price: 'desc' as const }
+      case 'price-asc':
+        return { price: 'asc' as const }
+      case 'title-asc':
+        return { title: 'asc' as const }
+      case 'title-desc':
+        return { title: 'desc' as const }
+      case 'category-asc':
+        return { category: { name: 'asc' as const } }
+      case 'brand-asc':
+        return { brand: { name: 'asc' as const } }
+      case 'store-asc':
+        return { store: { name: 'asc' as const } }
+      case 'date-desc':
+      default:
+        return { purchaseDate: 'desc' as const }
+    }
+  }
+
+  const orderBy = getOrderBy(sortParam)
 
   const where: any = {}
   if (categoryId) where.categoryId = categoryId
@@ -53,7 +82,7 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
   const items = await prisma.item.findMany({
     where,
     include: { store: true, category: true, year: true, brand: true, images: { orderBy: { order: 'asc' } } },
-    orderBy: { purchaseDate: 'desc' },
+    orderBy,
     skip: (currentPage - 1) * ITEMS_PER_PAGE,
     take: ITEMS_PER_PAGE
   })
@@ -82,7 +111,9 @@ export default async function Home({ searchParams }: { searchParams: { [key: str
             <Suspense fallback={null}>
               <MobileFilters categories={categories} years={years} stores={stores} brands={brands} />
             </Suspense>
-            <span className="toolbar-sort">Sort by: Date (Newest)</span>
+            <Suspense fallback={<span className="toolbar-sort">Sort by: Date (Newest)</span>}>
+              <SortDropdown />
+            </Suspense>
           </div>
 
           <div className="product-grid">
