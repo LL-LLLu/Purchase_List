@@ -284,18 +284,16 @@ header .btn {
 }
 
 .filter-options-dropdown .filter-item {
-  padding: 12px 4px;
-  border-bottom: 1px solid var(--color-border);
-  line-height: 1.4;
+  padding: 14px 8px;
+  margin-bottom: 8px;
+  background: var(--color-card-bg);
+  border-radius: 4px;
+  line-height: 1.5;
+  display: block;
 }
 
 .filter-options-dropdown .filter-item:last-child {
-  border-bottom: none;
-  padding-bottom: 4px;
-}
-
-.filter-options-dropdown .filter-item:first-child {
-  padding-top: 4px;
+  margin-bottom: 0;
 }
 
 /* Custom scrollbar for filter dropdowns */
