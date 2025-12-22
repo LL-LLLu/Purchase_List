@@ -22,9 +22,10 @@ export default async function AnalyticsPage() {
   const totalSpend = Number(totalSpendResult._sum.price || 0)
   const totalCount = items.length
 
-  // 2. Spend by Category
+  // 2. Spend by Category (only items with purchaseDate)
   const categoryStats: Record<string, number> = {}
   items.forEach(item => {
+    if (!item.purchaseDate) return
     const name = item.category.name
     categoryStats[name] = (categoryStats[name] || 0) + parseFloat(item.price.toString())
   })
@@ -32,10 +33,10 @@ export default async function AnalyticsPage() {
     .sort((a, b) => b[1] - a[1])
     .map(([name, value]) => ({ name, value, percent: (value / totalSpend) * 100 }))
 
-  // 3. Spend by Year
+  // 3. Spend by Year (only items with purchaseDate)
   const yearStats: Record<string, number> = {}
   items.forEach(item => {
-    // Prefer the linked Year model value, or fallback to purchaseDate year
+    if (!item.purchaseDate) return
     const yearVal = item.year.value.toString()
     yearStats[yearVal] = (yearStats[yearVal] || 0) + parseFloat(item.price.toString())
   })
@@ -43,9 +44,10 @@ export default async function AnalyticsPage() {
     .sort((a, b) => Number(b[0]) - Number(a[0])) // Newest years first
     .map(([name, value]) => ({ name, value, percent: (value / totalSpend) * 100 }))
 
-  // 4. Spend by Store (Top 5)
+  // 4. Spend by Store (Top 5, only items with purchaseDate)
   const storeStats: Record<string, number> = {}
   items.forEach(item => {
+    if (!item.purchaseDate) return
     const name = item.store.name
     storeStats[name] = (storeStats[name] || 0) + parseFloat(item.price.toString())
   })
