@@ -290,6 +290,7 @@ header .btn {
   border-radius: 4px;
   line-height: 1.5;
   display: block;
+  text-align: center;
 }
 
 .filter-options-dropdown .filter-item:last-child {
