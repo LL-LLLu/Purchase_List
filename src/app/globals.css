@@ -269,7 +269,7 @@ header .btn {
 .filter-options-dropdown {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
@@ -277,10 +277,38 @@ header .btn {
 }
 
 .filter-options-dropdown.expanded {
-  max-height: 300px;
+  max-height: 200px;
   opacity: 1;
   padding-top: 8px;
   overflow-y: auto;
+}
+
+.filter-options-dropdown .filter-item {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.filter-options-dropdown .filter-item:last-child {
+  border-bottom: none;
+}
+
+/* Custom scrollbar for filter dropdowns */
+.filter-options-dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+
+.filter-options-dropdown::-webkit-scrollbar-track {
+  background: var(--color-card-bg);
+  border-radius: 2px;
+}
+
+.filter-options-dropdown::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
+}
+
+.filter-options-dropdown::-webkit-scrollbar-thumb:hover {
+  background: var(--color-secondary);
 }
 
 .filter-toggle-indicator {
@@ -721,9 +749,9 @@ footer {
 }
 
 .mobile-filter-options.expanded {
-  max-height: 200px;
+  max-height: 180px;
   opacity: 1;
-  padding: 10px 0;
+  padding: 12px 0;
   overflow-y: auto;
 }
 
@@ -731,6 +759,21 @@ footer {
   max-height: 0;
   opacity: 0;
   padding: 0;
+}
+
+/* Custom scrollbar for mobile filter dropdowns */
+.mobile-filter-options::-webkit-scrollbar {
+  width: 4px;
+}
+
+.mobile-filter-options::-webkit-scrollbar-track {
+  background: var(--color-card-bg);
+  border-radius: 2px;
+}
+
+.mobile-filter-options::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 2px;
 }
 
 .mobile-filter-item {
